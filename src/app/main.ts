@@ -1,5 +1,5 @@
 import { Config } from '../config/config.js';
-import { Users } from '../id/users.js';
+import { Users } from '../id/repositories/users.js';
 import { createApp } from './app.js';
 
 // import dotenv from 'dotenv';

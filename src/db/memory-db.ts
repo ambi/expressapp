@@ -6,7 +6,7 @@ export interface MemoryDbOptions<T> {
   serialize?: Serialize<T>;
   deserialize?: Deserialize<T>;
   secondaryKeys?: string[];
-};
+}
 
 function defaultSerialize<T>(obj: T) {
   return JSON.stringify(obj);
@@ -16,7 +16,7 @@ function defaultDeserialize<T>(data: string) {
   return JSON.parse(data) as T;
 }
 
-export class MemoryDb<T extends { id: string;[key: string]: any; }> {
+export class MemoryDb<T extends { id: string; [key: string]: any }> {
   private serialize: Serialize<T>;
   private deserialize: Deserialize<T>;
   private secondaryKeys: string[];

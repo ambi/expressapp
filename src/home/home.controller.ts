@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
 import { Config } from '../config/config.js';
-import { getSession, saveSession } from '../id/signin.controller.js';
+import { getSession, saveSession } from '../id/controllers/session.js';
 import { HomeService } from './home.service.js';
 
 export class HomeController {

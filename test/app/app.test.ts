@@ -4,9 +4,9 @@ import * as cheerio from 'cheerio';
 
 import { createApp } from '../../src/app/app.js';
 import { Config } from '../../src/config/config.js';
-import { User } from '../../src/id/user.js';
-import { Users } from '../../src/id/users.js';
-import { PasswordService } from '../../src/id/password.service.js';
+import { User } from '../../src/id/models/user.js';
+import { Users } from '../../src/id/repositories/users.js';
+import { PasswordService } from '../../src/id/services/password.service.js';
 
 const cfg: Config = {
   port: 8080,

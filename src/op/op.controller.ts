@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { AuthorizeRequest, OpService } from './op.service.js';
 
 export class OpController {
-  constructor(private opSvc: OpService) { }
+  constructor(private opSvc: OpService) {}
 
   async authorize(req: Request, res: Response) {
     const params: AuthorizeRequest = {

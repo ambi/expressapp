@@ -13,7 +13,7 @@ export interface SigninResult {
 }
 
 export class SigninService {
-  constructor(private pwds: PasswordService, private users: UserRepo) { }
+  constructor(private pwds: PasswordService, private users: UserRepo) {}
 
   async signin(params: SigninParams): Promise<SigninResult> {
     const user = await this.users.findByUserName(params.userName);

@@ -1,6 +1,6 @@
-import { MemoryDb, MemoryDbOptions } from '../db/memory-db.js';
-import { User } from './user.js';
-import { UserRepo } from './user.repo.js';
+import { MemoryDb, MemoryDbOptions } from '../../db/memory-db.js';
+import { User } from '../models/user.js';
+import { UserRepo } from '../services/user.repo.js';
 
 export class Users implements UserRepo {
   private db: MemoryDb<User>;

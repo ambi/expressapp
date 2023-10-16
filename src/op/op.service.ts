@@ -1,5 +1,5 @@
-import { PasswordService } from '../id/password.service.js';
-import { UserRepo } from '../id/user.repo.js';
+import { PasswordService } from '../id/services/password.service.js';
+import { UserRepo } from '../id/services/user.repo.js';
 
 export interface AuthorizeRequest {
   // OAuth 2.0

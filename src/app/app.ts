@@ -7,12 +7,12 @@ import flash from 'connect-flash';
 import csurf from 'csurf';
 
 import { Config } from '../config/config.js';
-import { SigninController } from '../id/signin.controller.js';
-import { SigninService } from '../id/signin.service.js';
-import { PasswordService } from '../id/password.service.js';
+import { SigninController } from '../id/controllers/signin.controller.js';
+import { SigninService } from '../id/services/signin.service.js';
+import { PasswordService } from '../id/services/password.service.js';
 import { HomeController } from '../home/home.controller.js';
 import { HomeService } from '../home/home.service.js';
-import { UserRepo } from '../id/user.repo.js';
+import { UserRepo } from '../id/services/user.repo.js';
 
 export const logger = winston.createLogger({
   format: winston.format.json(),
@@ -92,7 +92,7 @@ export function createApp(cfg: Config, users: UserRepo) {
   app.post(cfg.signinPath, csrfProtection, signinCtr.signin.bind(signinCtr));
 
   app.use((req, res, next) => {
-    res.status(404).send("Sorry can't find that!");
+    res.status(404).send('Sorry can\'t find that!');
   });
 
   app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

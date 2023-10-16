@@ -1,4 +1,4 @@
-import { User } from './user.js';
+import { User } from '../models/user.js';
 
 export interface UserRepo {
   get(id: string): Promise<User | undefined>;
