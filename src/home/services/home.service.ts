@@ -1,5 +1,5 @@
-import { User } from '../id/models/user.js';
-import { UserRepo } from '../id/services/user.repo.js';
+import { User } from '../../id/models/user.js';
+import { UserRepo } from '../../id/services/user.repo.js';
 
 export interface HomeParams {
   userId: string;

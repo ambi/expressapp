@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 
-import { Config } from '../config/config.js';
-import { getSession, saveSession } from '../id/controllers/session.js';
-import { HomeService } from './home.service.js';
+import { Config } from '../../config/config.js';
+import { getSession, saveSession } from '../../id/controllers/session.js';
+import { HomeService } from '../services/home.service.js';
 
 export class HomeController {
   constructor(private cfg: Config, private homeSvc: HomeService) {
