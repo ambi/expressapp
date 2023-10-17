@@ -8,11 +8,11 @@ export interface MemoryDbOptions<T> {
   secondaryKeys?: string[];
 }
 
-function defaultSerialize<T>(obj: T) {
+export function defaultSerialize<T>(obj: T) {
   return JSON.stringify(obj);
 }
 
-function defaultDeserialize<T>(data: string) {
+export function defaultDeserialize<T>(data: string) {
   return JSON.parse(data) as T;
 }
 
@@ -21,7 +21,7 @@ export class MemoryDb<T extends { id: string; [key: string]: any }> {
   private deserialize: Deserialize<T>;
   private secondaryKeys: string[];
   private db: Map<string, string>;
-  private indexDb: Map<string, Map<string, Set<string>>>;
+  private indexDb: Map<string, Map<string, string>>;
 
   constructor(options: MemoryDbOptions<T>) {
     this.serialize = options.serialize || defaultSerialize;
@@ -43,23 +43,18 @@ export class MemoryDb<T extends { id: string; [key: string]: any }> {
     return this.deserialize(data);
   }
 
-  async findBy(key: string, value: string): Promise<T[] | undefined> {
+  async findBy(key: string, value: string): Promise<T | undefined> {
     const index = this.indexDb.get(key);
     if (!index) {
       throw new Error(`unknown index: ${key}`);
     }
 
-    const ids = index.get(value);
-    if (!ids) {
+    const id = index.get(value);
+    if (!id) {
       return undefined;
     }
 
-    const result = [];
-    for (const id of ids) {
-      const value = await this.get(id);
-      if (value !== undefined) result.push(value);
-    }
-    return result;
+    return await this.get(id);
   }
 
   async save(obj: T): Promise<void> {
@@ -77,12 +72,7 @@ export class MemoryDb<T extends { id: string; [key: string]: any }> {
       }
       const indexedKey = obj[key];
       if (typeof indexedKey !== 'string') continue;
-      const indexedValues = index.get(indexedKey);
-      if (indexedValues) {
-        indexedValues.add(obj.id);
-      } else {
-        index.set(indexedKey, new Set([obj.id]));
-      }
+      index.set(indexedKey, obj.id);
     }
   }
 
@@ -98,10 +88,7 @@ export class MemoryDb<T extends { id: string; [key: string]: any }> {
       }
       const indexedKey = obj[key];
       if (typeof indexedKey !== 'string') continue;
-      const indexedValues = index.get(indexedKey);
-      if (indexedValues) {
-        indexedValues.delete(obj.id);
-      }
+      index.delete(indexedKey);
     }
 
     return this.db.delete(obj.id);

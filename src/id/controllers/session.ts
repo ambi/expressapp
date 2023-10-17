@@ -1,10 +1,10 @@
 import { Request } from 'express';
 
-import { Session } from '../models/session.js';
+import { AuthenticationResult, Session } from '../models/session.js';
 
 declare module 'express-session' {
   interface SessionData {
-    authentication_result: string | null;
+    authentication_result: AuthenticationResult | null;
     user_id: string | null;
     post_signin: string | null;
     post_signin_params: any;

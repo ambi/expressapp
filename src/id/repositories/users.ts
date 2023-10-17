@@ -19,10 +19,7 @@ export class Users implements UserRepo {
   }
 
   async findByUserName(userName: string): Promise<User | undefined> {
-    const users = await this.db.findBy('userName', userName);
-    if (!users) return undefined;
-    if (users.length === 0) return undefined;
-    return users[0];
+    return await this.db.findBy('userName', userName);
   }
 
   async save(user: User): Promise<void> {

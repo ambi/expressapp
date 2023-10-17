@@ -3,12 +3,18 @@ import { z } from 'zod';
 
 import { Config } from '../../config/config.js';
 import { SigninParams, SigninService } from '../services/signin.service.js';
+import { AuthenticationResult } from '../models/session.js';
 import { getSession, resetSession, saveSession } from './session.js';
 
 export const SigninRequest = z.object({
   username: z.string().min(1),
   password: z.string().min(1),
-});
+}).transform((x) =>
+  <SigninParams> ({
+    userName: x.username,
+    password: x.password,
+  })
+);
 
 export const DEFAULT_POST_SIGNIN = '/home';
 
@@ -34,13 +40,9 @@ export class SigninController {
       return;
     }
 
-    const params: SigninParams = {
-      userName: valid.data.username,
-      password: valid.data.password,
-    };
-    const result = await this.signinSvc.signin(params);
+    const result = await this.signinSvc.signin(valid.data);
 
-    if (result.authenticationResult === 'failure') {
+    if (result.authenticationResult !== AuthenticationResult.SUCCESS) {
       req.flash('error', 'Signin failed');
       res.redirect(this.cfg.signinPath);
       return;
@@ -49,7 +51,7 @@ export class SigninController {
     const session = { ...getSession(req), ...result };
     // Reset the session against session fixation attacks.
     await resetSession(req);
-    await saveSession(req, result);
+    await saveSession(req, session);
 
     res.redirect(session.postSignin || DEFAULT_POST_SIGNIN);
   }

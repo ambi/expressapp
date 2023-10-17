@@ -20,6 +20,6 @@ pnpm test
 Use Deno for the linter and the formatter.
 
 ```shell
-deno lint -c deno.jsonc
-deno fmt -c deno.jsonc
+deno lint
+deno fmt
 ```

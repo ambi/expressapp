@@ -1,3 +1,4 @@
+import { AuthenticationResult } from '../models/session.js';
 import { PasswordService } from './password.service.js';
 import { UserRepo } from './user.repo.js';
 
@@ -7,7 +8,7 @@ export interface SigninParams {
 }
 
 export interface SigninResult {
-  authenticationResult: string;
+  authenticationResult: AuthenticationResult;
   userId?: string;
   reason?: string;
 }
@@ -18,14 +19,14 @@ export class SigninService {
   async signin(params: SigninParams): Promise<SigninResult> {
     const user = await this.users.findByUserName(params.userName);
     if (!user) {
-      return { authenticationResult: 'failure', reason: 'user_not_found' };
+      return { authenticationResult: AuthenticationResult.FAILURE, reason: 'user_not_found' };
     }
 
     const validPwd = await this.pwds.verify(user.passwordHash, params.password);
     if (!validPwd) {
-      return { authenticationResult: 'failure', reason: 'invalid_password' };
+      return { authenticationResult: AuthenticationResult.FAILURE, reason: 'invalid_password' };
     }
 
-    return { authenticationResult: 'success', userId: user.id };
+    return { authenticationResult: AuthenticationResult.SUCCESS, userId: user.id };
   }
 }

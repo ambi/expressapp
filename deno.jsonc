@@ -29,13 +29,14 @@
   "fmt": {
     "include": [
       "src",
+      "test",
       "deno.jsonc"
     ],
     "exclude": [
       "node_modules"
     ],
     "useTabs": false,
-    "lineWidth": 100,
+    "lineWidth": 120,
     "indentWidth": 2,
     "singleQuote": true
   }
