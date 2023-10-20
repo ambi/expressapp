@@ -1,5 +1,5 @@
 import { Redis, RedisOptions } from 'ioredis';
-import { defaultDeserialize, defaultSerialize, Deserialize, Serialize } from './memory-db.js';
+import { Deserialize, Serialize, defaultDeserialize, defaultSerialize } from './memory-db.js';
 
 export interface MemoryDbOptions<T> {
   serialize?: Serialize<T>;

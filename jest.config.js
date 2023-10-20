@@ -7,9 +7,6 @@ export default {
   },
   extensionsToTreatAsEsm: ['.ts'],
   transform: {
-    '^.+\\.(mt|t|cj|j)s$': [
-      'ts-jest',
-      { useESM: true }
-    ]
-  }
+    '^.+\\.(mt|t|cj|j)s$': ['ts-jest', { useESM: true }],
+  },
 };
