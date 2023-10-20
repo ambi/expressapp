@@ -1,8 +1,9 @@
 import * as cheerio from 'cheerio';
 import setCookie from 'set-cookie-parser';
 import supertest from 'supertest';
+import { beforeAll, describe, expect, it } from 'vitest';
 
-import { createApp } from '../../src/app/app.js';
+import { createApp, logger } from '../../src/app/app.js';
 import { Config } from '../../src/config/config.js';
 import { User } from '../../src/id/models/user.js';
 import { Users } from '../../src/id/repositories/users.js';
@@ -18,6 +19,10 @@ const cfg: Config = {
 };
 const users = new Users();
 const app = createApp(cfg, users);
+
+beforeAll(() => {
+  logger.silent = true;
+});
 
 describe('GET /signin', () => {
   it('returns the signin page', async () => {
