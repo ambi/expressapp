@@ -3,20 +3,12 @@ import setCookie from 'set-cookie-parser';
 import supertest from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { createApp, logger } from '../../src/app/app.js';
-import { Config } from '../../src/config/config.js';
+import { createApp, defaultConfig, logger } from '../../src/app/app.js';
 import { User } from '../../src/id/models/user.js';
 import { Users } from '../../src/id/repositories/users.js';
 import { PasswordService } from '../../src/id/services/password.service.js';
 
-const cfg: Config = {
-  port: 8080,
-  sessionSecret: 'test-secret',
-  homePath: '/home',
-  signinPath: '/signin',
-  authorizePath: '/authorize',
-  tokenPath: '/token',
-};
+const cfg = defaultConfig;
 const users = new Users();
 const app = createApp(cfg, users);
 
@@ -56,7 +48,7 @@ describe('GET /home', () => {
     let location = res.headers.location;
     expect(location).toEqual('/signin');
     let sCookies = setCookie(res.headers['set-cookie']);
-    let cookies = sCookies.map((c) => `${c.name}=${c.value}`).join('; '); // TODO
+    let cookies = sCookies.map((c) => `${c.name}=${c.value}`).join('; ');
 
     res = await supertest(app).get(location).set('cookie', cookies);
     expect(res.status).toBe(200);
@@ -73,7 +65,7 @@ describe('GET /home', () => {
     location = res.headers.location;
     expect(location).toEqual('/home');
     sCookies = setCookie(res.headers['set-cookie']);
-    cookies = sCookies.map((c) => `${c.name}=${c.value}`).join('; '); // TODO
+    cookies = sCookies.map((c) => `${c.name}=${c.value}`).join('; ');
 
     res = await supertest(app).get(location).set('cookie', cookies);
     expect(res.status).toBe(200);

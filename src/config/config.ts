@@ -4,6 +4,4 @@ export interface Config {
 
   homePath: string;
   signinPath: string;
-  authorizePath: string;
-  tokenPath: string;
 }

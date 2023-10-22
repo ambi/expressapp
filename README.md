@@ -17,9 +17,7 @@ pnpm test
 
 ## Lint
 
-Use Deno for the linter and the formatter.
-
 ```shell
-deno lint
-deno fmt
+pnpm lint
+pnpm fmt
 ```

@@ -14,6 +14,13 @@ import { PasswordService } from '../id/services/password.service.js';
 import { SigninService } from '../id/services/signin.service.js';
 import { UserRepo } from '../id/services/user.repo.js';
 
+export const defaultConfig: Config = {
+  port: 8080,
+  sessionSecret: 'secret',
+  homePath: '/home',
+  signinPath: '/signin',
+};
+
 export const logger = winston.createLogger({
   format: winston.format.json(),
   transports: [new winston.transports.Console()],
