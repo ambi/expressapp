@@ -3,8 +3,7 @@ import csurf from 'csurf';
 import express, { NextFunction, Request, Response } from 'express';
 import { engine } from 'express-handlebars';
 import session from 'express-session';
-import expressWinston from 'express-winston';
-import winston from 'winston';
+import { pinoHttp } from 'pino-http';
 
 import { Config } from '../config/config.js';
 import { HomeController } from '../home/controllers/home.controller.js';
@@ -13,6 +12,7 @@ import { SigninController } from '../id/controllers/signin.controller.js';
 import { PasswordService } from '../id/services/password.service.js';
 import { SigninService } from '../id/services/signin.service.js';
 import { UserRepo } from '../id/services/user.repo.js';
+import { PinoLogger } from '../logger/pino-logger.js';
 
 export const defaultConfig: Config = {
   port: 8080,
@@ -21,16 +21,13 @@ export const defaultConfig: Config = {
   signinPath: '/signin',
 };
 
-export const logger = winston.createLogger({
-  format: winston.format.json(),
-  transports: [new winston.transports.Console()],
-});
-
 export function createApp(cfg: Config, users: UserRepo) {
   const app = express();
 
   // Logging.
-  app.use(expressWinston.logger({ winstonInstance: logger }));
+  const pino = pinoHttp({ redact: ['req.headers.cookie', 'res.headers["set-cookie"]'] });
+  const logger = new PinoLogger(pino.logger);
+  app.use(pino);
 
   // Support requests of "application/json".
   app.use(express.json());
@@ -86,8 +83,11 @@ export function createApp(cfg: Config, users: UserRepo) {
 
   // OpenAPI: TODO.
 
+  // Disable X-Powered-By.
+  app.disable('x-powered-by');
+
   const pwdSvc = new PasswordService();
-  const signinSvc = new SigninService(pwdSvc, users);
+  const signinSvc = new SigninService(logger, pwdSvc, users);
   const homeSvc = new HomeService(users);
   const signinCtr = new SigninController(cfg, signinSvc);
   const homeCtr = new HomeController(cfg, homeSvc);

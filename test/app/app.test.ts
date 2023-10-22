@@ -3,7 +3,8 @@ import setCookie from 'set-cookie-parser';
 import supertest from 'supertest';
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { createApp, defaultConfig, logger } from '../../src/app/app.js';
+import { createApp, defaultConfig } from '../../src/app/app.js';
+import { createTestData } from '../../src/app/test-data.js';
 import { User } from '../../src/id/models/user.js';
 import { Users } from '../../src/id/repositories/users.js';
 import { PasswordService } from '../../src/id/services/password.service.js';
@@ -11,9 +12,10 @@ import { PasswordService } from '../../src/id/services/password.service.js';
 const cfg = defaultConfig;
 const users = new Users();
 const app = createApp(cfg, users);
+let testData: { users: User[]; userPasswords: string[] };
 
-beforeAll(() => {
-  logger.silent = true;
+beforeAll(async () => {
+  testData = await createTestData(users);
 });
 
 describe('GET /signin', () => {
@@ -33,16 +35,6 @@ describe('GET /home', () => {
   });
 
   it('returns the home page (authenticated)', async () => {
-    const pwdSvc = new PasswordService();
-    const userPassword = 'p@ssw0rd!';
-    const user: User = {
-      id: 'USER_ID1',
-      userName: 'user1@example.com',
-      passwordHash: await pwdSvc.createHash(userPassword),
-      attrs: [],
-    };
-    await users.save(user);
-
     let res = await supertest(app).get('/home');
     expect(res.status).toBe(302);
     let location = res.headers.location;
@@ -58,8 +50,8 @@ describe('GET /home', () => {
     res = await supertest(app)
       .post(location)
       .set('cookie', cookies)
-      .send(`username=${user.userName}`)
-      .send(`password=${userPassword}`)
+      .send(`username=${testData.users[0].userName}`)
+      .send(`password=${testData.userPasswords[0]}`)
       .send(`_csrf=${csrfToken}`);
     expect(res.status).toBe(302);
     location = res.headers.location;
@@ -69,6 +61,6 @@ describe('GET /home', () => {
 
     res = await supertest(app).get(location).set('cookie', cookies);
     expect(res.status).toBe(200);
-    expect(res.text).toMatch(`User name: ${user.userName}`);
+    expect(res.text).toMatch(`User name: ${testData.users[0].userName}`);
   });
 });

@@ -32,6 +32,8 @@ export class SigninController {
   }
 
   async signin(req: Request, res: Response) {
+    const ctx = { req: { id: req.id } };
+
     const valid = SigninRequest.safeParse(req.body);
     if (!valid.success) {
       req.flash('error', 'Signin failed');
@@ -39,7 +41,7 @@ export class SigninController {
       return;
     }
 
-    const result = await this.signinSvc.signin(valid.data);
+    const result = await this.signinSvc.signin(ctx, valid.data);
 
     if (result.authenticationResult !== AuthenticationResult.SUCCESS) {
       req.flash('error', 'Signin failed');
