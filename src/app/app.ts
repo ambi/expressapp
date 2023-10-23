@@ -3,6 +3,7 @@ import csurf from 'csurf';
 import express, { NextFunction, Request, Response } from 'express';
 import { engine } from 'express-handlebars';
 import session from 'express-session';
+import helmet from 'helmet';
 import { pinoHttp } from 'pino-http';
 
 import { Config } from '../config/config.js';
@@ -25,7 +26,8 @@ export function createApp(cfg: Config, users: UserRepo) {
   const app = express();
 
   // Logging.
-  const pino = pinoHttp({ redact: ['req.headers.cookie', 'res.headers["set-cookie"]'] });
+  // Redact senstive information. Cookie and authorization headers should be hidden.
+  const pino = pinoHttp({ redact: ['req.headers.cookie', 'res.headers["set-cookie"]', 'req.headers.authorization'] });
   const logger = new PinoLogger(pino.logger);
   app.use(pino);
 
@@ -78,13 +80,11 @@ export function createApp(cfg: Config, users: UserRepo) {
   // const prisma = new PrismaClient();
 
   // Secure HTTP response headers.
-  // import helmet from 'helmet';
-  // app.use(helmet());
+  app.use(helmet());
+  // Disable X-Powered-By. (helmet disabled it, but we write explicit disabling just in case)
+  app.disable('x-powered-by');
 
   // OpenAPI: TODO.
-
-  // Disable X-Powered-By.
-  app.disable('x-powered-by');
 
   const pwdSvc = new PasswordService();
   const signinSvc = new SigninService(logger, pwdSvc, users);
@@ -93,19 +93,19 @@ export function createApp(cfg: Config, users: UserRepo) {
   const homeCtr = new HomeController(cfg, homeSvc);
 
   app.get(cfg.homePath, homeCtr.home.bind(homeCtr));
-  // TODO: csurf has been deprecated.
+  // TODO: csurf has been deprecated, but csurf is a good choice even now.
   const csrfProtection = csurf();
   app.get(cfg.signinPath, csrfProtection, signinCtr.signinPage.bind(signinCtr));
   app.post(cfg.signinPath, csrfProtection, signinCtr.signin.bind(signinCtr));
 
   app.use((req, res, next) => {
-    res.status(404).send("Sorry can't find that!");
+    res.status(404).json({ error: 'not_found' });
   });
 
   app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     console.error(err.stack);
-    res.status(500).send('Something broke!');
+    res.status(500).json({ error: 'server_error' });
   });
 
-  return app;
+  return { app, logger };
 }

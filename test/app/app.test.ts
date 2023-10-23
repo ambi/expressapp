@@ -7,11 +7,12 @@ import { createApp, defaultConfig } from '../../src/app/app.js';
 import { createTestData } from '../../src/app/test-data.js';
 import { User } from '../../src/id/models/user.js';
 import { Users } from '../../src/id/repositories/users.js';
-import { PasswordService } from '../../src/id/services/password.service.js';
+import { LogLevel } from '../../src/logger/logger.js';
 
 const cfg = defaultConfig;
 const users = new Users();
-const app = createApp(cfg, users);
+const { app, logger } = createApp(cfg, users);
+logger.level = LogLevel.SILENT;
 let testData: { users: User[]; userPasswords: string[] };
 
 beforeAll(async () => {
