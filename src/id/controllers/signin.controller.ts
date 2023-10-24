@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { z } from 'zod';
 
 import { Config } from '../../config/config.js';
-import { AuthenticationResult } from '../models/session.js';
+import { AuthenticationStatus } from '../models/session.js';
 import { SigninParams, SigninService } from '../services/signin.service.js';
 import { getSession, resetSession, saveSession } from './session.js';
 
@@ -43,7 +43,7 @@ export class SigninController {
 
     const result = await this.signinSvc.signin(ctx, valid.data);
 
-    if (result.authenticationResult !== AuthenticationResult.SUCCESS) {
+    if (result.authenticationStatus !== AuthenticationStatus.AUTHENTICATED) {
       req.flash('error', 'Signin failed');
       res.redirect(this.cfg.signinPath);
       return;
@@ -59,8 +59,10 @@ export class SigninController {
 
   async signout(req: Request, res: Response) {
     await saveSession(req, {
-      authenticationResult: null,
+      authenticationStatus: null,
       userId: null,
+      postSignin: null,
+      postSigninParams: null,
     });
 
     // TODO: redirect to the post-signout endpoint.

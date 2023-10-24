@@ -1,10 +1,10 @@
-export enum AuthenticationResult {
-  SUCCESS = 'success',
-  FAILURE = 'failure',
+export enum AuthenticationStatus {
+  AUTHENTICATED = 'authenticated',
+  UNAUTHENTICATED = 'unauthenticated',
 }
 
 export interface Session {
-  authenticationResult?: AuthenticationResult | null;
+  authenticationStatus?: AuthenticationStatus | null;
   userId?: string | null;
   postSignin?: string | null;
   postSigninParams?: any;

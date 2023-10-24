@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 
 import { Config } from '../../config/config.js';
 import { getSession, saveSession } from '../../id/controllers/session.js';
+import { AuthenticationStatus } from '../../id/models/session.js';
 import { HomeService } from '../services/home.service.js';
 
 export class HomeController {
@@ -9,7 +10,7 @@ export class HomeController {
 
   async home(req: Request, res: Response) {
     const session = getSession(req);
-    if (session.authenticationResult !== 'success' || !session.userId) {
+    if (session.authenticationStatus !== AuthenticationStatus.AUTHENTICATED || !session.userId) {
       await saveSession(req, {
         postSignin: this.cfg.homePath,
       });

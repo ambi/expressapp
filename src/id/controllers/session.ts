@@ -1,10 +1,10 @@
 import { Request } from 'express';
 
-import { AuthenticationResult, Session } from '../models/session.js';
+import { AuthenticationStatus, Session } from '../models/session.js';
 
 declare module 'express-session' {
   interface SessionData {
-    authentication_result: AuthenticationResult | null;
+    authentication_result: AuthenticationStatus | null;
     user_id: string | null;
     post_signin: string | null;
     post_signin_params: any;
@@ -13,15 +13,15 @@ declare module 'express-session' {
 
 export function getSession(req: Request): Session {
   return {
-    authenticationResult: req.session.authentication_result,
+    authenticationStatus: req.session.authentication_result,
     userId: req.session.user_id,
     postSignin: req.session.post_signin,
   };
 }
 
 export async function saveSession(req: Request, session: Session) {
-  if (session.authenticationResult !== undefined) {
-    req.session.authentication_result = session.authenticationResult;
+  if (session.authenticationStatus !== undefined) {
+    req.session.authentication_result = session.authenticationStatus;
   }
   if (session.userId !== undefined) {
     req.session.user_id = session.userId;
