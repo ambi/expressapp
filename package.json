@@ -22,10 +22,9 @@
     "@types/express-session": "^1.17.8",
     "@types/node": "^20.8.3",
     "@types/set-cookie-parser": "^2.4.4",
-    "@types/supertest": "^2.0.14",
+    "axios": "^1.5.1",
     "cheerio": "1.0.0-rc.12",
     "set-cookie-parser": "^2.6.0",
-    "supertest": "^6.3.3",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2",
     "vitest": "^0.34.6"
