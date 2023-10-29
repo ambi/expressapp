@@ -1,6 +1,6 @@
 import { Request } from 'express';
 
-import { AuthenticationStatus, Session } from '../models/session.js';
+import { AuthenticationStatus, Session } from '../../id/models/session.js';
 
 declare module 'express-session' {
   interface SessionData {

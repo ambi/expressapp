@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { z } from 'zod';
 
 import { Config } from '../../config/config.js';
+import { contextFromRequest } from '../../context/context.js';
 import { AuthenticationStatus } from '../models/session.js';
 import { SigninParams, SigninService } from '../services/signin.service.js';
 import { getSession, resetSession, saveSession } from './session.js';
@@ -32,7 +33,7 @@ export class SigninController {
   }
 
   async signin(req: Request, res: Response) {
-    const ctx = { req: { id: req.id } };
+    const ctx = contextFromRequest(req);
 
     const valid = SigninRequest.safeParse(req.body);
     if (!valid.success) {
