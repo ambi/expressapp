@@ -1,5 +1,4 @@
-import { Context } from '../../context/context.js';
-import { Logger } from '../../logger/logger.js';
+import { Logger } from 'pino';
 import { AuthenticationStatus } from '../models/session.js';
 import { PasswordService } from './password.service.js';
 import { UserRepo } from './user.repo.js';
@@ -16,22 +15,22 @@ export interface SigninResult {
 }
 
 export class SigninService {
-  constructor(private logger: Logger, private pwds: PasswordService, private users: UserRepo) {}
+  constructor(private pwds: PasswordService, private users: UserRepo) {}
 
-  async signin(ctx: Context, params: SigninParams): Promise<SigninResult> {
+  async signin(logger: Logger, params: SigninParams): Promise<SigninResult> {
     const user = await this.users.findByUserName(params.userName);
     if (!user) {
-      this.logger.warn('signin: user not found', { userName: params.userName, ctx });
+      logger.warn({ userName: params.userName }, 'signin: user not found');
       return { authenticationStatus: AuthenticationStatus.UNAUTHENTICATED, reason: 'user_not_found' };
     }
 
     const validPwd = await this.pwds.verify(user.passwordHash, params.password);
     if (!validPwd) {
-      this.logger.warn('signin: invalid password', { userName: params.userName, ctx });
+      logger.warn({ userName: params.userName }, 'signin: invalid password');
       return { authenticationStatus: AuthenticationStatus.UNAUTHENTICATED, reason: 'invalid_password' };
     }
 
-    this.logger.info('signin: password authentication succeeded', { userName: params.userName, ctx });
+    logger.info({ userName: params.userName }, 'signin: password authentication succeeded');
     return { authenticationStatus: AuthenticationStatus.AUTHENTICATED, userId: user.id };
   }
 }

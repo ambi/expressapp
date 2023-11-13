@@ -13,7 +13,6 @@ import { SigninController } from '../id/controllers/signin.controller.js';
 import { PasswordService } from '../id/services/password.service.js';
 import { SigninService } from '../id/services/signin.service.js';
 import { UserRepo } from '../id/services/user.repo.js';
-import { PinoLogger } from '../logger/pino-logger.js';
 
 export const defaultConfig: Config = {
   port: 8080,
@@ -28,7 +27,6 @@ export function createApp(cfg: Config, users: UserRepo) {
   // Logging.
   // Redact senstive information. Cookie and authorization headers should be hidden.
   const pino = pinoHttp({ redact: ['req.headers.cookie', 'res.headers["set-cookie"]', 'req.headers.authorization'] });
-  const logger = new PinoLogger(pino.logger);
   app.use(pino);
 
   // Support requests of "application/json".
@@ -87,7 +85,7 @@ export function createApp(cfg: Config, users: UserRepo) {
   // OpenAPI: TODO.
 
   const pwdSvc = new PasswordService();
-  const signinSvc = new SigninService(logger, pwdSvc, users);
+  const signinSvc = new SigninService(pwdSvc, users);
   const homeSvc = new HomeService(users);
   const signinCtr = new SigninController(cfg, signinSvc);
   const homeCtr = new HomeController(cfg, homeSvc);
@@ -107,5 +105,5 @@ export function createApp(cfg: Config, users: UserRepo) {
     res.status(500).json({ error: 'server_error' });
   });
 
-  return { app, logger };
+  return { app, logger: pino.logger };
 }

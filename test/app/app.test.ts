@@ -8,12 +8,11 @@ import { createApp, defaultConfig } from '../../src/app/app.js';
 import { createTestData } from '../../src/app/test-data.js';
 import { User } from '../../src/id/models/user.js';
 import { Users } from '../../src/id/repositories/users.js';
-import { LogLevel } from '../../src/logger/logger.js';
 
 const cfg = defaultConfig;
 const users = new Users();
 const { app, logger } = createApp(cfg, users);
-logger.level = LogLevel.SILENT;
+logger.level = 'silent';
 let testData: { users: User[]; userPasswords: string[] };
 const axiosCfg: CreateAxiosDefaults = {
   validateStatus: () => true, // Don't throw HTTP exceptions.

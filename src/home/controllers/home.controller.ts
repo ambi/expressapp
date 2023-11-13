@@ -19,7 +19,7 @@ export class HomeController {
     }
 
     const params = { userId: session.userId };
-    const result = await this.homeSvc.home(params);
+    const result = await this.homeSvc.home(req.log, params);
 
     res.status(200).render('../src/home/views/home', { user: result.user });
   }
